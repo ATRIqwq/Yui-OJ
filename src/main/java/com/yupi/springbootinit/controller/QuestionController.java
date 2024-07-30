@@ -16,6 +16,7 @@ import com.yupi.springbootinit.model.entity.User;
 import com.yupi.springbootinit.model.vo.QuestionVO;
 import com.yupi.springbootinit.service.QuestionService;
 import com.yupi.springbootinit.service.UserService;
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/question")
 @Slf4j
+@Api(tags = "题目接口")
 public class QuestionController {
 
     @Resource

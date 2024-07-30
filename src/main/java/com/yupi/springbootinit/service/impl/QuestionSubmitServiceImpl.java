@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yupi.springbootinit.common.ErrorCode;
 import com.yupi.springbootinit.constant.CommonConstant;
 import com.yupi.springbootinit.exception.BusinessException;
+import com.yupi.springbootinit.judge.JudgeService;
 import com.yupi.springbootinit.mapper.QuestionSubmitMapper;
 import com.yupi.springbootinit.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.yupi.springbootinit.model.dto.questionsubmit.QuestionSubmitQueryRequest;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +45,9 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     @Resource
     private UserService userService;
 
+    @Resource
+    private JudgeService judgeService;
+
     /**
      * 提交题目到判题模块
      * @param questionSubmitAddRequest 题目提交信息
@@ -54,6 +59,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         String language = questionSubmitAddRequest.getLanguage();
         String code = questionSubmitAddRequest.getCode();
         Long questionId = questionSubmitAddRequest.getQuestionId();
+
 
         //校验编程语言是否合法
         QuestionSubmitLanguageEnum languageEnum = QuestionSubmitLanguageEnum.getByEnumValue(language);
@@ -75,15 +81,18 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
 
         questionSubmit.setStatus(QuestionSubmitStatusEnum.WAITING.getValue());
         questionSubmit.setJudgeInfo("{}");
+        Long questionSubmitId = questionSubmit.getId();
 
         boolean save = this.save(questionSubmit);
         if (!save){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"插入失败");
         }
         //提交
+        CompletableFuture.runAsync(()->{
+            judgeService.doJudge(questionSubmitId);
+        });
 
-
-        return 0;
+        return questionSubmitId;
     }
 
     /**

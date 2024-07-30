@@ -3,7 +3,7 @@ package com.yupi.springbootinit.model.vo;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.yupi.springbootinit.model.dto.questionsubmit.JudgeInfo;
+import com.yupi.springbootinit.judge.codesendbox.model.JudgeInfo;
 import com.yupi.springbootinit.model.entity.QuestionSubmit;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
